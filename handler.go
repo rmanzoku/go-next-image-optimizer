@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 func (o *Optimizer) Handler(w http.ResponseWriter, r *http.Request) {
@@ -26,26 +27,34 @@ func (o *Optimizer) Handler(w http.ResponseWriter, r *http.Request) {
 	}
 	var h int
 	if query.Get("h") != "" {
-		h, err = strconv.Atoi(query.Get("w"))
+		h, err = strconv.Atoi(query.Get("h"))
 		if err != nil {
 			http.Error(w, fmt.Sprintf("...: %w", err), 400)
 			return
 		}
 	}
-	var q int
+	var q int = 100
 	if query.Get("q") != "" {
-		q, err = strconv.Atoi(query.Get("w"))
+		q, err = strconv.Atoi(query.Get("q"))
 		if err != nil {
 			http.Error(w, fmt.Sprintf("...: %w", err), 400)
 			return
 		}
 	}
-	ret, err := o.Optimize(url, wi, h, q, true)
+
+	accept := r.Header.Get("Accept")
+	webpReady := strings.Contains(accept, "image/webp")
+
+	ret, err := o.Optimize(url, wi, h, q, webpReady)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("...: %w", err), 500)
 		return
 	}
 
-	w.Header().Set("Content-Type", "image/webp")
+	contentType := "image/png"
+	if webpReady {
+		contentType = "image/webp"
+	}
+	w.Header().Set("Content-Type", contentType)
 	w.Write(ret)
 }

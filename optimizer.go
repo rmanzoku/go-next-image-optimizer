@@ -25,7 +25,10 @@ func (o *Optimizer) Optimize(url string, w, h, q int, webpFlag bool) ([]byte, er
 		return nil, err
 	}
 
-	resized := imaging.Resize(src, w, h, imaging.NearestNeighbor)
+	resized := src
+	if !(w == 0 && h == 0) {
+		resized = imaging.Resize(src, w, h, imaging.NearestNeighbor)
+	}
 
 	ret := bytes.Buffer{}
 	if webpFlag {
