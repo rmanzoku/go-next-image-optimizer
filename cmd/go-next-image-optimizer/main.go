@@ -11,15 +11,22 @@ var (
 	version  = "none"
 	revision = "none"
 	port     = "9900"
+	imageSrc = ""
 )
 
 func init() {
 	if os.Getenv("PORT") != "" {
 		port = os.Getenv("PORT")
 	}
+	if os.Getenv("IMAGE_SRC") != "" {
+		imageSrc = os.Getenv("IMAGE_SRC")
+	} else {
+		panic("IMAGE_SRC environment value is not found")
+	}
 }
 
 func main() {
-	http.HandleFunc("/", optimizer.Handler)
+	o := optimizer.NewOptimizer(imageSrc)
+	http.HandleFunc("/", o.Handler)
 	http.ListenAndServe(":"+port, nil)
 }

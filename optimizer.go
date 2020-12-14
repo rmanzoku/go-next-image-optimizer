@@ -44,12 +44,10 @@ func (o *Optimizer) Optimize(url string, w, h, q int, webpFlag bool) ([]byte, er
 		}
 	}
 	return ret.Bytes(), nil
-
 }
 
 func (o *Optimizer) getSrc(url string) (image.Image, error) {
 	client := new(http.Client)
-
 	req, err := http.NewRequestWithContext(context.TODO(), "GET", o.SrcURL+url, nil)
 	if err != nil {
 		return nil, err
