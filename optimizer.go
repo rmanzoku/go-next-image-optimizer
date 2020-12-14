@@ -1,9 +1,14 @@
 package optimizer
 
 import (
+	"bytes"
 	"context"
-	"io/ioutil"
+	"image"
+	"image/png"
 	"net/http"
+
+	"github.com/chai2010/webp"
+	"github.com/disintegration/imaging"
 )
 
 type Optimizer struct {
@@ -14,11 +19,35 @@ func NewOptimizer(srcUrl string) *Optimizer {
 	return &Optimizer{SrcURL: srcUrl}
 }
 
-func (o *Optimizer) Optimize(url string, w, h, q int, webp bool) ([]byte, error) {
-	return o.getSrc(url)
+func (o *Optimizer) Optimize(url string, w, h, q int, webpFlag bool) ([]byte, error) {
+	src, err := o.getSrc(url)
+	if err != nil {
+		return nil, err
+	}
+
+	resized := imaging.Resize(src, w, h, imaging.NearestNeighbor)
+
+	ret := bytes.Buffer{}
+	if webpFlag {
+		opt := &webp.Options{
+			Lossless: true,
+			Quality:  float32(q),
+		}
+		err = webp.Encode(&ret, resized, opt)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		err = png.Encode(&ret, resized)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return ret.Bytes(), nil
+
 }
 
-func (o *Optimizer) getSrc(url string) ([]byte, error) {
+func (o *Optimizer) getSrc(url string) (image.Image, error) {
 	client := new(http.Client)
 
 	req, err := http.NewRequestWithContext(context.TODO(), "GET", o.SrcURL+url, nil)
@@ -32,10 +61,6 @@ func (o *Optimizer) getSrc(url string) ([]byte, error) {
 	}
 	defer resp.Body.Close()
 
-	buf, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf, err
+	img, _, err := image.Decode(resp.Body)
+	return img, err
 }

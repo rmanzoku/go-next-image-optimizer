@@ -1,6 +1,7 @@
 cmd/go-next-image-optimizer/go-next-image-optimizer
 tmp/
-
+go.sum
+test.png
 .envrc
 
 # Binaries for programs and plugins
