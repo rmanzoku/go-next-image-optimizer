@@ -1,6 +1,8 @@
 cmd/go-next-image-optimizer/go-next-image-optimizer
 tmp/
 
+.envrc
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
