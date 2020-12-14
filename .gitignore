@@ -1,4 +1,4 @@
-go-next-image-optimizer
+cmd/go-next-image-optimizer/go-next-image-optimizer
 tmp/
 
 # Binaries for programs and plugins
