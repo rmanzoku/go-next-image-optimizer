@@ -33,7 +33,7 @@ func (o *Optimizer) Optimize(url string, w, h, q int, webpFlag bool) ([]byte, er
 	ret := bytes.Buffer{}
 	if webpFlag {
 		opt := &webp.Options{
-			Lossless: true,
+			Lossless: false,
 			Quality:  float32(q),
 		}
 		err = webp.Encode(&ret, resized, opt)
