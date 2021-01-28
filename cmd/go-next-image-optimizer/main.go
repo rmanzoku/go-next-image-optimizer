@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	_ "net/http/pprof"
 	"os"
 
 	optimizer "github.com/rmanzoku/go-next-image-optimizer"

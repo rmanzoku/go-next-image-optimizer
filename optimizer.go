@@ -31,6 +31,8 @@ func (o *Optimizer) Optimize(url string, w, h, q int, webpFlag bool) ([]byte, er
 	}
 
 	ret := bytes.Buffer{}
+
+	webpFlag = false
 	if webpFlag {
 		opt := &webp.Options{
 			Lossless: false,
